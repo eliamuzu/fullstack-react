@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Persons = ({newFilter, persons}) => {
+const Persons = ({newFilter, persons, deletePerson}) => {
    
     if (newFilter === '') {
         var personsToShow = persons
@@ -14,8 +14,10 @@ const Persons = ({newFilter, persons}) => {
         {
           personsToShow.map((person) => (
             <p key={person.id}>
-            {person.name} {person.number}
+            {person.name} {person.number} 
+            <button onClick={() => deletePerson(person)}>delete</button>
             </p>
+            
           ))
         }
       </div>
