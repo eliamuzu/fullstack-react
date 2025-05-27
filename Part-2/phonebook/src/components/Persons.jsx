@@ -24,4 +24,4 @@ const Persons = ({newFilter, persons, deletePerson}) => {
   )
 }
 
-export default Persons
+export default Persons 

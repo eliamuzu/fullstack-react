@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import personService from './services/persons.js'
+import './index.css'
 import Filter from './components/Filter.jsx'
 import Form from './components/Form.jsx'
 import Persons from './components/Persons.jsx'
+import Notification from './components/Notification.jsx'
 
 
 const App = () => {
@@ -10,6 +12,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [message, setMessage] = useState('')
+  const [color, setColor] = useState(true)
 
   useEffect(() => {
     console.log('fetching data')
@@ -25,15 +29,19 @@ const App = () => {
       number : newNumber,
     }
    
-    if (persons.some(person => person.name === newName)) {
-      const p = persons.find(person => person.name === newName)
+    if (persons.some(person => person.name.trim() === newName.trim())) {
+      const p = persons.find(person => person.name.trim() === newName.trim())
       const changedDetails = {...p, number: newNumber}
-      confirm(`${p.name} is already added to phonebook, replace the old number with a new one?`)
 
+      confirm(`${p.name} is already added to phonebook, replace the old number with a new one?`)
       personService
         .update(p.id, changedDetails)
         .then( () => {
             setPersons(persons.map(person => person.id === p.id ? changedDetails : person))
+        })
+        .catch(error => {
+          setMessage(`Information of ${p.name} has already been removed from server`)
+          setColor(false)
         })
     }
     else {
@@ -44,6 +52,15 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+        .then(() => {
+          setColor(true)
+          setMessage(`Added ${personObject.name}`)
+          setTimeout(() => {
+            setMessage('')
+          }, 5000)
+        })
+       
+        
      
     }
   }
@@ -72,6 +89,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={message} isError={color}/>
 
       <Filter newFilter={newFilter} handleFilter={handleFilter} />
       
