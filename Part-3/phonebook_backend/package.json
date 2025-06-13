@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "express": "^5.1.0",
+    "mogodb": "^0.0.1-security",
+    "mongoose": "^8.15.1",
     "morgan": "^1.10.0"
   }
 }
