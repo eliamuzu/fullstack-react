@@ -65,9 +65,6 @@ const App = () => {
             setMessage('')
           }, 5000)
         })
-       
-        
-     
     }
   }
 
