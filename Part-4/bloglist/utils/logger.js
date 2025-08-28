@@ -1,3 +1,5 @@
+//logging module for info tracking on the console
+
 const info = (...params) => {
     console.log(...params)
 }
