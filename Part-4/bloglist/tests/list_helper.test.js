@@ -91,3 +91,20 @@ describe(
       assert.strictEqual(listHelper.totalLikes(blogs), 36)
     })
 })
+
+//test for blog with the most likes
+describe(
+  'most liked blog', () => {
+    test('in list of blogs', () => {
+      assert.deepStrictEqual(listHelper.favoriteBlog(blogs), blogs[2])
+    })
+  }
+)
+
+describe(
+  'most blogs', () => {
+    test('in a list of blogs', () => {
+      assert.deepStrictEqual(listHelper.mostBlogs(blogs), {author: "Robert C. Martin", blogs: 3})
+    })
+  }
+)
