@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const { identifierCheck } = require('../utils/blog_helper')
 
 const api = supertest(app)
 
@@ -47,6 +48,7 @@ beforeEach(async () => {
 })
 
 
+
 test('blogs are returned as JSON', async () => {
   await api
     .get('/api/blogs')
@@ -58,4 +60,16 @@ test('correct number of blogs are returned', async () => {
   const response = await api.get('/api/blogs')
 
   assert.strictEqual(response.body.length, 4)
+})
+
+test('unique identifier of blog is named id not _id', async()=>{
+  const response = await api.get('/api/blogs');
+
+  response.body.forEach(blog => {
+    assert.ok(blog.hasOwnProperty('id'), "There is and '_id' property in a blog")
+  })
+})
+
+after(async () =>{
+  await mongoose.connection.close()
 })
