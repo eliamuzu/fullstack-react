@@ -34,8 +34,9 @@ blogRouter.delete('/blogs/:id', async (request, response) => {
 })
 
 //route for updating a blog
-blogRouter.put('/blogs/:id', async (request, response) => {
-  const { title, author, url, likes } = request.body //destructure the values of the blog we want to update
+blogRouter.put('/blogs/:id', async (request, response, next) => {
+  try {
+     const { title, author, url, likes } = request.body //destructure the values of the blog we want to update
 
   const id = request.params.id;
   const blog = await Blog.findById(id) //finding the blog we want to update
@@ -49,8 +50,10 @@ blogRouter.put('/blogs/:id', async (request, response) => {
   blog.likes = likes ?? blog.likes
 
   const updatedBlog = await blog.save()
-  response.status(200).json(updatedBlog)
-
+  response.status(200).json(updatedBlog)  
+  } catch (error) {
+    next(error)
+  }
 })
 
 
