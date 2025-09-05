@@ -67,30 +67,52 @@ describe('Testing endpoint POST /api/blogs', () => {
     const response = await api.post('/api/blogs').send(newBlog)
     assert.strictEqual(response.body.likes, 0)
   })
-})
 
-describe(' validation for new blogs are not missing data', () => {
-  test('like title', async () => {
-    const newBlog = {
-      author: "Test Author",
-      url: "http://example.com"
-    }
+  describe(' validating new blogs are not missing data', () => {
+    test('like title', async () => {
+      const newBlog = {
+        author: "Test Author",
+        url: "http://example.com"
+      }
 
-    const response = await api.post('/api/blogs').send(newBlog)
-    assert.strictEqual(response.status, 400)
-  })
+      await api.post('/api/blogs').send(newBlog).expect(400)
+    })
 
-  test('like url', async () => {
-    const newBlog = {
-      title: "Blog without url",
-      author: "Test Author"
-    }
+    test('like url', async () => {
+      const newBlog = {
+        title: "Blog without url",
+        author: "Test Author"
+      }
 
-    const response = await api.post('/api/blogs').send(newBlog)
-    assert.strictEqual(response.status, 400)
+      await api.post('/api/blogs').send(newBlog).expect(400)
+    })
   })
 })
 
+describe('Testing PUT /api/blogs/:id', () => {
+  test('note is updated with new content', async () => {
+    const response = await api.get('/api/blogs')
+    const id = response.body[0].id
+
+    const updatedResponse = await api.put(`/api/blogs/${id}`).send({title: "Updated Blog"})
+
+    assert.deepStrictEqual(updatedResponse.body.title, "Updated Blog")
+  })
+
+  test('fails with a status code 404 if blog does not exist', async () => {
+    const nonExistentId = '507f1f77bcf86cd799439011'
+    await api.put(`/api/blogs/${nonExistentId}`).send({title: "Blog does not exist"}).expect(404)
+  })
+})
+
+describe('deletion of a note', () => {
+  test('succeed with a stus code of 204 if id is valid', async () => {
+    const blogsAtStart = await api.get('/api/blogs')
+    const noteToDelete = blogsAtStart.body[1]
+
+    await api.delete(`/api/blogs/${noteToDelete.id}`).expect(204)
+  })
+})
 
 after(async () =>{
   await mongoose.connection.close()

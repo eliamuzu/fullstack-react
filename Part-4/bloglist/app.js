@@ -21,4 +21,11 @@ app.use(express.json())
 
 app.use('/api/', blogRouter)
 
+app.use((error, request, response, next) => {
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+  next(error)
+})
+
 module.exports = app
