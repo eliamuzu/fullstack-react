@@ -17,30 +17,32 @@ beforeEach(async () => {
   }
 })
 
-
-
-test('blogs are returned as JSON', async () => {
+describe('Testing GET /api/blogs', () => {
+  test('blogs are returned as JSON', async () => {
   await api
     .get('/api/blogs')
     .expect(200)
     .expect('Content-type', /application\/json/)
-})
+  })
 
-test('correct number of blogs are returned', async () => {
-  const response = await api.get('/api/blogs')
+  test('correct number of blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
 
-  assert.strictEqual(response.body.length, 4)
-})
+    assert.strictEqual(response.body.length, 4)
+  })
 
-test('unique identifier of blog is named id not _id', async()=>{
-  const response = await api.get('/api/blogs');
+  test('unique identifier of blog is named id not _id', async()=>{
+    const response = await api.get('/api/blogs');
 
-  response.body.forEach(blog => {
-    assert.ok(blog.hasOwnProperty('id'), "There is and '_id' property in a blog")
+    response.body.forEach(blog => {
+      assert.ok(blog.hasOwnProperty('id'), "There is and '_id' property in a blog")
+    })
   })
 })
 
-test( 'post request to "/api/blogs" creates a new blog', async() => {
+
+describe('Testing endpoint POST /api/blogs', () => {
+  test( 'post request to "/api/blogs" creates a new blog', async() => {
   const newBlog =  {
     title: "Does the post test work",
     author: "Prince W. Test",
@@ -52,30 +54,30 @@ test( 'post request to "/api/blogs" creates a new blog', async() => {
 
   const response = await api.get('/api/blogs')
   assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
+  })
+
+  test('if likes property is missing, it defaults to 0', async () => {
+    const newBlog = {
+      title: "Blog without likes",
+      author: "Test Author",
+      url: "http://example.com"
+      // likes is missing
+    }
+
+    const response = await api.post('/api/blogs').send(newBlog)
+    assert.strictEqual(response.body.likes, 0)
+  })
 })
 
-test('if likes property is missing, it defaults to 0', async () => {
-  const newBlog = {
-    title: "Blog without likes",
-    author: "Test Author",
-    url: "http://example.com"
-    // likes is missing
-  }
-
-  const response = await api.post('/api/blogs').send(newBlog)
-  assert.strictEqual(response.body.likes, 0)
-})
-
-describe('new blogs are not missing data', () => {
-
+describe(' validation for new blogs are not missing data', () => {
   test('like title', async () => {
-  const newBlog = {
-    author: "Test Author",
-    url: "http://example.com"
-  }
+    const newBlog = {
+      author: "Test Author",
+      url: "http://example.com"
+    }
 
-  const response = await api.post('/api/blogs').send(newBlog)
-  assert.strictEqual(response.status, 400)
+    const response = await api.post('/api/blogs').send(newBlog)
+    assert.strictEqual(response.status, 400)
   })
 
   test('like url', async () => {
